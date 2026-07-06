@@ -18,6 +18,14 @@ def test_route_unavailable_adds_restart_note(tmp_path):
     assert ctx["prefer"] == {"name": "security-auditor", "available": False}
     assert "restart" in ctx["note"].lower()
 
+def test_route_prefer_available_narrow_missing_no_halt(tmp_path):
+    agents = tmp_path / "agents"; agents.mkdir()
+    (agents / "security-auditor.md").write_text("---\nname: security-auditor\n---\nx")
+    ctx = cli.route("run a semgrep security scan", RULES, [str(agents)])
+    assert ctx["prefer"] == {"name": "security-auditor", "available": True}
+    assert ctx["narrow"] == {"name": "semgrep-scanner", "available": False}
+    assert ctx["note"] == ""
+
 def test_default_agent_dirs_filters_existing(tmp_path):
     (tmp_path / ".claude" / "agents").mkdir(parents=True)
     dirs = cli.default_agent_dirs(str(tmp_path), str(tmp_path))

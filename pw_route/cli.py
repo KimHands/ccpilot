@@ -18,9 +18,10 @@ def route(task, rules_path, agent_dirs):
     doc = rules.load_rules(rules_path)
     m = rules.match_task(task, doc, names)
     note = ""
-    for slot in ("prefer", "narrow"):
-        if m[slot] and not m[slot]["available"]:
-            note = RESTART_NOTE
+    prefer_unavail = m["prefer"] and not m["prefer"]["available"]
+    narrow_ok = m["narrow"] and m["narrow"]["available"]
+    if prefer_unavail and not narrow_ok:
+        note = RESTART_NOTE
     return {"task": task, "domain": m["domain"], "prefer": m["prefer"],
             "narrow": m["narrow"], "fallback": m["fallback"], "matched": m["matched"],
             "availableAgents": sorted(names), "note": note}
