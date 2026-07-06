@@ -16,6 +16,6 @@ def upsert_marker_block(text, block, begin, end):
     pattern = re.compile(re.escape(begin) + r".*?" + re.escape(end), re.DOTALL)
     new_block = f"{begin}\n{block}\n{end}"
     if pattern.search(text):
-        return pattern.sub(new_block, text)
-    sep = "" if text.endswith("\n") or text == "" else "\n"
-    return f"{text}{sep}\n{new_block}\n"
+        return pattern.sub(lambda m: new_block, text)
+    base = text if (text == "" or text.endswith("\n")) else text + "\n"
+    return f"{base}\n{new_block}\n"
