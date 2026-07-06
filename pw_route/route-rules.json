@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "rules": [
+    {
+      "domain": "security",
+      "match": ["보안", "security", "취약", "vuln", "audit", "감사"],
+      "prefer": "security-auditor",
+      "narrow": [{ "when": ["semgrep"], "use": "semgrep-scanner" }, { "when": ["codeql"], "use": "semgrep-scanner" }]
+    },
+    {
+      "domain": "test",
+      "match": ["테스트", "test", "커버리지", "coverage", "단위", "unit"],
+      "prefer": "test-engineer",
+      "narrow": []
+    }
+  ],
+  "fallback": "prefer-original-plugin-agents"
+}
