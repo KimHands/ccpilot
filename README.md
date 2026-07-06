@@ -1,5 +1,11 @@
 # ccpilot
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)
+![tests](https://img.shields.io/badge/tests-48%20passing-brightgreen.svg)
+![deps](https://img.shields.io/badge/dependencies-none%20(stdlib)-success.svg)
+![for](https://img.shields.io/badge/for-Claude%20Code-8A2BE2.svg)
+
 **프로젝트마다 Claude Code 플러그인·에이전트를 최적으로 구성해주는 워크플로우 툴킷.**
 
 `ccpilot`은 두 개의 사용자 레벨 확장으로 이루어져 있다:
@@ -13,13 +19,50 @@
 
 ## 설치
 
+**요구사항:** [Claude Code](https://code.claude.com) · Python 3.10+ · git. (런타임 외부 의존성은 없다 — 표준 라이브러리만 쓴다.)
+
 ```bash
 git clone https://github.com/KimHands/ccpilot.git
 cd ccpilot
 bash install.sh
 ```
 
-`~/.claude/` 아래에 슬래시 명령·에이전트·데이터 파일을 복사한다. **Claude Code를 재시작**하면 명령이 로드된다. 기존 사용자 에이전트·설정은 보존한다(가산 설치).
+`install.sh`가 하는 일:
+
+- `pw/`·`pw_route/` → `~/.claude/`
+- `commands/*.md` → `~/.claude/commands/` (`/project-init` `/phase-next` `/project-status` `/project-activate` `/route`)
+- `agents/security-auditor.md`·`test-engineer.md` → `~/.claude/agents/`
+- `pw/presets.json` → `~/.claude/project-presets.json`, `pw_route/route-rules.json` → `~/.claude/route-rules.json`
+
+**가산 설치** — 기존 사용자 에이전트·설정을 덮어쓰지 않는다. 설치 후 **Claude Code를 재시작**하면 명령이 로드된다.
+
+<details>
+<summary>제거</summary>
+
+```bash
+rm -rf ~/.claude/pw ~/.claude/pw_route
+rm -f  ~/.claude/commands/{project-init,phase-next,project-status,project-activate,route}.md
+rm -f  ~/.claude/agents/{security-auditor,test-engineer}.md
+rm -f  ~/.claude/project-presets.json ~/.claude/route-rules.json
+```
+</details>
+
+## 데모
+
+```console
+$ cd my-new-app        # (pyproject.toml + .py 파일 존재)
+> /project-init
+  감지된 언어: python · 추천 프리셋: backend-api
+  ✓ .claude/settings.json  (활성 8 · 비활성 12)
+  ✓ .claude/playbook.md · project-state.json · CLAUDE.md
+  → 새 세션에서 로드됨. 다음: /phase-next
+
+> /route 이 코드 보안 감사해줘
+  domain: security → security-auditor (available)
+  plan: kesekit + /semgrep + security-guidance 병렬 → 종합
+        출력 계약: findings/evidence/inspected/confidence/unresolved/next
+```
+> 실제 스크린샷·GIF는 추후 추가 예정.
 
 ---
 
