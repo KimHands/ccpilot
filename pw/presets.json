@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "alwaysOn": ["superpowers@superpowers-dev", "agentmemory@agentmemory", "andrej-karpathy-skills@karpathy-skills"],
+  "phaseModel": {
+    "phases": ["brainstorm", "plan", "implement", "review", "ship"],
+    "roles": {
+      "brainstorm": [
+        {"role": "요구사항 취조", "tool": "grill-me", "optional": true},
+        {"role": "설계 확정", "tool": "superpowers:brainstorming"},
+        {"role": "기존코드 이해", "tool": "understand-anything", "whenCapability": "existing-code"}
+      ],
+      "plan": [
+        {"role": "계획 작성", "tool": "superpowers:writing-plans"},
+        {"role": "영향 분석", "tool": "understand-anything", "whenCapability": "existing-code"},
+        {"role": "라이브러리 문서", "tool": "context7"}
+      ],
+      "implement": [
+        {"role": "구현 루프", "tool": "superpowers:test-driven-development"},
+        {"role": "언어 인텔리전스", "tool": "__lsp_by_language__"},
+        {"role": "테스트 작성/수정", "tool": "test-writer-fixer"},
+        {"role": "라이브러리 문서", "tool": "context7"},
+        {"role": "UI 생성", "tool": "frontend-design", "whenCapability": "frontend"},
+        {"role": "문서 산출물", "tool": "document-skills", "whenCapability": "docs-output"}
+      ],
+      "review": [
+        {"role": "주력 리뷰", "tool": "/code-review"},
+        {"role": "단순화", "tool": "code-simplifier"},
+        {"role": "실시간 보안", "tool": "security-guidance"},
+        {"role": "정적 보안", "tool": "static-analysis"},
+        {"role": "한국 규제", "tool": "kesekit", "whenCapability": "kr-compliance"}
+      ],
+      "ship": [
+        {"role": "커밋/PR", "tool": "gh"},
+        {"role": "릴리스 문서", "tool": "document-skills", "whenCapability": "docs-output"},
+        {"role": "학습 영속", "tool": "agentmemory:remember"}
+      ]
+    }
+  },
+  "capabilityTags": {
+    "detect": {
+      "typescript": ["package.json", "tsconfig.json"],
+      "python": ["pyproject.toml", "requirements.txt"],
+      "go": ["go.mod"],
+      "rust": ["Cargo.toml"],
+      "frontend": ["package.json::react", "package.json::next"],
+      "infra": ["Dockerfile", "*.tf"]
+    },
+    "lspFor": {
+      "typescript": "typescript-lsp@claude-plugins-official",
+      "python": "pyright-lsp@claude-plugins-official",
+      "go": "gopls-lsp@claude-plugins-official",
+      "rust": "rust-analyzer-lsp@claude-plugins-official"
+    }
+  },
+  "presets": {
+    "web-fullstack": {"plugins": ["typescript-lsp@claude-plugins-official", "pyright-lsp@claude-plugins-official", "frontend-design@claude-plugins-official", "figma@claude-plugins-official", "vercel@claude-plugins-official", "context7@claude-plugins-official", "test-writer-fixer@awesome-claude-plugins", "code-simplifier@claude-plugins-official", "security-guidance@claude-plugins-official", "understand-anything@understand-anything"]},
+    "backend-api": {"plugins": ["context7@claude-plugins-official", "test-writer-fixer@awesome-claude-plugins", "static-analysis@trailofbits", "security-guidance@claude-plugins-official", "code-simplifier@claude-plugins-official", "understand-anything@understand-anything"], "lspByLanguage": true},
+    "security-audit": {"plugins": ["static-analysis@trailofbits", "kesekit@kesekit", "security-guidance@claude-plugins-official", "understand-anything@understand-anything", "code-simplifier@claude-plugins-official"], "capabilities": ["kr-compliance"]},
+    "docs-deck": {"plugins": ["document-skills@anthropic-agent-skills", "felo-slides@felo-ai", "context7@claude-plugins-official"], "personalSkills": ["academic-pptx", "pptx-from-layouts"], "capabilities": ["docs-output"]},
+    "minimal": {"plugins": ["context7@claude-plugins-official"], "lspByLanguage": true}
+  },
+  "invocationRules": {
+    "orchestrator": {"primary": "superpowers", "rescueOnly": ["codex"]},
+    "memory": {"single": "agentmemory"},
+    "review": {"primary": "/code-review", "specialists": ["code-simplifier", "security-guidance", "static-analysis", "kesekit"], "order": "primary first then specialists on explicit trigger", "stopWhen": "no new findings"},
+    "lsp": "one per detected language",
+    "docs": {"general": "document-skills", "specialized": ["academic-pptx", "pptx-from-layouts", "felo-slides"]}
+  }
+}
