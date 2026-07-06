@@ -1,4 +1,4 @@
-import json, os
+import json, os, subprocess, sys
 from pw import cli
 
 PRESETS = os.path.join(os.path.dirname(__file__), "..", "pw", "presets.json")
@@ -19,3 +19,10 @@ def test_end_to_end_init_then_phase_next(tmp_path, monkeypatch):
     assert "pyright-lsp" in pb
     out = cli.cmd_phase_next(str(proj), now="t2")
     assert out["phase"] == "plan"
+
+def test_cli_runs_as_script_without_import_error(tmp_path):
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    cli_path = os.path.join(repo_root, "pw", "cli.py")
+    result = subprocess.run([sys.executable, cli_path], capture_output=True, text=True, cwd=str(tmp_path))
+    assert "ModuleNotFoundError" not in result.stderr
+    assert result.returncode == 2

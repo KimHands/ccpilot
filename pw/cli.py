@@ -1,4 +1,6 @@
 import argparse, os, re
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pw import data, detect, fsutil, playbook, state
 
 CLAUDE_PTR = ("이 프로젝트는 .claude/playbook.md 의 단계별 워크플로우를 따른다. "
@@ -40,7 +42,8 @@ def cmd_init(project_dir, preset, presets_path, installed_path, now, dry_run=Fal
     fsutil.write_json(p["state"], st)
     existing_md = ""
     if os.path.exists(p["claudemd"]):
-        existing_md = open(p["claudemd"], encoding="utf-8").read()
+        with open(p["claudemd"], encoding="utf-8") as f:
+            existing_md = f.read()
     with open(p["claudemd"], "w", encoding="utf-8") as f:
         f.write(fsutil.upsert_marker_block(existing_md, CLAUDE_PTR, PTR_BEGIN, PTR_END))
     result["written"] = [p["settings"], p["playbook"], p["state"], p["claudemd"]]
@@ -93,7 +96,7 @@ def main(argv):
     sub.add_parser("phase-next"); sub.add_parser("status")
     pa = sub.add_parser("activate"); pa.add_argument("slug")
     args = ap.parse_args(argv)
-    now = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     cwd = os.getcwd()
     if args.cmd == "init":
         out = cmd_init(cwd, args.preset, dflt_presets, dflt_installed, now,
