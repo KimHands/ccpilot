@@ -126,6 +126,11 @@ python3 -m venv venv && ./venv/bin/pip install pytest
 
 Python 3.10+ 표준 라이브러리만 사용한다(런타임 의존성 없음). 슬래시 명령은 `python3 ~/.claude/pw*/cli.py`를 스크립트로 실행하므로 각 `cli.py`는 sys.path 부트스트랩을 포함한다.
 
+## 버전 기록
+
+- **v0.2.0** (2026-07-06) — SessionStart 훅 추가. 세션 시작 시 초기화된 프로젝트는 **현재 단계·도구를 자동 주입**하고, 미설정(소스 있는) 프로젝트는 **`/project-init` 을 제안**한다. 기존 훅 보존·멱등 설치.
+- **v0.1.0** (2026-07-06) — 최초. A(프리셋·단계 플레이북: `/project-init`·`/phase-next`·`/project-status`·`/project-activate`) + B(에이전트 라우팅 `/route` + 전문가 `security-auditor`·`test-engineer`). 순수 stdlib, 48 tests.
+
 ## 라이선스
 
 MIT
