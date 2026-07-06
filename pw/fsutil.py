@@ -1,3 +1,4 @@
+import copy
 import json, os, re
 
 def read_json(path, default=None):
@@ -19,3 +20,13 @@ def upsert_marker_block(text, block, begin, end):
         return pattern.sub(lambda m: new_block, text)
     base = text if (text == "" or text.endswith("\n")) else text + "\n"
     return f"{base}\n{new_block}\n"
+
+def merge_enabled_plugins(existing, enable, disable):
+    out = copy.deepcopy(existing) if existing else {}
+    ep = dict(out.get("enabledPlugins", {}))
+    for s in disable:
+        ep[s] = False
+    for s in enable:      # enable 이 disable 을 이김
+        ep[s] = True
+    out["enabledPlugins"] = ep
+    return out
